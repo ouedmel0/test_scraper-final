@@ -1,0 +1,4 @@
+scrapy>=2.11
+kafka-python>=2.0.2
+pymongo>=4.6
+lxml>=5.0

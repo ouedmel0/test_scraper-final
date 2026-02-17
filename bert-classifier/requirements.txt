@@ -1,0 +1,5 @@
+torch>=2.0
+transformers>=4.36
+kafka-python>=2.0.2
+pymongo>=4.6
+numpy>=1.24

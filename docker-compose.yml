@@ -1,0 +1,276 @@
+version: '3.8'
+
+# =============================================================================
+# ROBUST-SCRAPER — Docker Compose
+# Pipeline: Scheduler → Scrapy → raw_documents → Preprocessor →
+#           preprocessed_documents → BERT → classified_documents →
+#           Consumer → MongoDB → Dashboard
+# Author: ANSSI Burkina Faso
+# =============================================================================
+
+services:
+  # ==========================================================================
+  # INFRASTRUCTURE
+  # ==========================================================================
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: robust-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: robust-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 168
+    networks:
+      - robust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server=localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  mongodb:
+    image: mongo:7.0
+    container_name: robust-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-ChangeMe789}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - robust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================================================
+  # TOR + PRIVOXY
+  # ==========================================================================
+  
+  tor-privoxy:
+    image: dperson/torproxy
+    container_name: robust-tor-privoxy
+    ports:
+      - "9050:9050"
+      - "8118:8118"
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # PIPELINE APPLICATIF
+  # ==========================================================================
+
+  scheduler:
+    build:
+      context: ./scheduler
+    container_name: robust-scheduler
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      ONION_URLS_FILE: /app/onion_urls.txt
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./scheduler/onion_urls.txt:/app/onion_urls.txt:rw
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  scraper:
+    build:
+      context: ./scraper
+    container_name: robust-scraper
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      tor-privoxy:
+        condition: service_started
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_RAW: raw_documents
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+      HTTP_PROXY: "http://tor-privoxy:8118"
+      HTTPS_PROXY: "http://tor-privoxy:8118"
+      ONION_URLS_FILE: /app/onion_urls.txt
+      KEYWORDS_FILE: /app/keywords/leak_keywords.txt
+      CONCURRENT_REQUESTS: "4"
+      DOWNLOAD_DELAY: "5"
+      DEPTH_LIMIT: "2"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./scraper:/app
+      - ./keywords:/app/keywords:ro
+      - ./scheduler/onion_urls.txt:/app/onion_urls.txt:ro
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  preprocessor:
+    build:
+      context: ./preprocessor
+    container_name: robust-preprocessor
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_INPUT: raw_documents
+      KAFKA_TOPIC_OUTPUT: preprocessed_documents
+      KAFKA_GROUP_ID: preprocessor-group
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+      PYTHONUNBUFFERED: "1"
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  bert-classifier:
+    build:
+      context: ./bert-classifier
+    container_name: robust-bert
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_INPUT: preprocessed_documents
+      KAFKA_TOPIC_OUTPUT: classified_documents
+      KAFKA_GROUP_ID: bert-classifier-group
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+      MODEL_PATH: /app/model
+      MAX_LENGTH: "512"
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./bert-classifier/model:/app/model:ro
+    networks:
+      - robust-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  consumer:
+    build:
+      context: ./consumer
+    container_name: robust-consumer
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_TOPIC_INPUT: classified_documents
+      KAFKA_GROUP_ID: consumer-final-group
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+      PYTHONUNBUFFERED: "1"
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # DASHBOARD STREAMLIT
+  # ==========================================================================
+
+  dashboard:
+    build:
+      context: ./dashboard
+    container_name: robust-dashboard
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./dashboard:/app
+    networks:
+      - robust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==========================================================================
+  # MONITORING
+  # ==========================================================================
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: robust-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - robust-network
+    restart: unless-stopped
+
+  # ==========================================================================
+  # SEED (peuplement de la base pour démo)
+  # ==========================================================================
+
+  seed:
+    build:
+      context: ./seed
+    container_name: robust-seed
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-ChangeMe789}@mongodb:27017/
+      MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
+    networks:
+      - robust-network
+    restart: "no"
+
+volumes:
+  mongodb-data:
+  grafana-data:
+
+networks:
+  robust-network:
+    driver: bridge
