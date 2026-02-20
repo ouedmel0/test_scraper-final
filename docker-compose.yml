@@ -1,11 +1,12 @@
 version: '3.8'
 
 # =============================================================================
-# ROBUST-SCRAPER — Docker Compose
+# ROBUST-SCRAPER — Docker Compose v3
 # Pipeline: Scheduler → Scrapy → raw_documents → Preprocessor →
 #           preprocessed_documents → BERT → classified_documents →
 #           Consumer → MongoDB → Dashboard
 # Author: ANSSI Burkina Faso
+# Updated: Spider v3 avec seed_urls.json + injection HTTP
 # =============================================================================
 
 services:
@@ -121,16 +122,19 @@ services:
       MONGO_DATABASE: ${MONGO_DATABASE:-robust_scraper}
       HTTP_PROXY: "http://tor-privoxy:8118"
       HTTPS_PROXY: "http://tor-privoxy:8118"
-      ONION_URLS_FILE: /app/onion_urls.txt
-      KEYWORDS_FILE: /app/keywords/leak_keywords.txt
-      CONCURRENT_REQUESTS: "4"
-      DOWNLOAD_DELAY: "5"
-      DEPTH_LIMIT: "2"
+      # --- Spider v3 : seed_urls.json remplace onion_urls.txt ---
+      SEED_URLS_FILE: /app/config/seed_urls.json
+      # --- Throttling adapté au Dark Web via Tor ---
+      CONCURRENT_REQUESTS: "2"
+      DOWNLOAD_DELAY: "8"
+      DOWNLOAD_TIMEOUT: "60"
+      DEPTH_LIMIT: "3"
+      MAX_PAGES: "1000"
+      LOG_LEVEL: "INFO"
       PYTHONUNBUFFERED: "1"
     volumes:
       - ./scraper:/app
-      - ./keywords:/app/keywords:ro
-      - ./scheduler/onion_urls.txt:/app/onion_urls.txt:ro
+      - ./config/seed_urls.json:/app/config/seed_urls.json:ro
     networks:
       - robust-network
     restart: unless-stopped

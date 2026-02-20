@@ -33,19 +33,22 @@ class DashboardMongoClient:
         bf_leaks = self.leaks.count_documents({'is_bf_related': True})
         bert_classified = self.leaks.count_documents({'bert_prediction': {'$exists': True}})
         critical_leaks = self.leaks.count_documents({'bert_prediction.severity': 'critical'})
-        
-        # Recent leaks (last 24h)
-        yesterday = datetime.utcnow() - timedelta(days=1)
-        recent_leaks = self.leaks.count_documents({'created_at': {'$gte': yesterday}})
-        
-        return {
-            'total_leaks': total_leaks,
-            'bf_leaks': bf_leaks,
-            'bert_classified': bert_classified,
-            'critical_leaks': critical_leaks,
-            'recent_leaks': recent_leaks,
-            'bf_percentage': (bf_leaks / total_leaks * 100) if total_leaks > 0 else 0
-        }
+    
+    # Evite division par zéro si la base est vide
+    safe_total = total_leaks if total_leaks > 0 else 1
+    
+    recent_leaks = self.leaks.count_documents({
+        'scraped_at': {'$gte': datetime.now() - timedelta(hours=24)}
+    })
+    
+    return {
+        'total_leaks': total_leaks,
+        'bf_leaks': bf_leaks,
+        'bert_classified': bert_classified,
+        'critical_leaks': critical_leaks,
+        'recent_leaks': recent_leaks,
+        'bf_percentage': round((bf_leaks / safe_total) * 100, 1),
+    }
     
     # ========================================================================
     # LEAKS

@@ -1,0 +1,155 @@
+{
+  "_metadata": {
+    "project": "Robust-Scraper — ANSSI Burkina Faso",
+    "description": "URLs seed PRETES A REQUETER pour Scrapy/Tor/Privoxy. Chaque URL est une requete HTTP complete avec keywords injectes.",
+    "proxy": "http://127.0.0.1:8118",
+    "generated_at": "2026-02-19"
+  },
+  "start_urls": {
+    "ahmia_searches": {
+      "base_url": "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion",
+      "query_pattern": "/search/?q={keyword}",
+      "method": "GET",
+      "priority": "CRITICAL",
+      "description": "Ahmia retourne du HTML avec les resultats. Parser les <a href> contenant .onion.",
+      "urls": [
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=burkina+faso+data+leak",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=burkina+faso+breach",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=gov.bf+hack",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=CNIB+leak+burkina",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=password+dump+africa",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=west+africa+credential+leak",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=database+dump+sahel",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=fuite+donn%C3%A9es+burkina",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=onatel+hack",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=coris+bank+leak",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=orange+burkina+data",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=ecobank+burkina+breach",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=combo+list+africa",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=sql+injection+gov.bf",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=ouagadougou+leak",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=credential+stuffing+burkina",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=mobile+money+leak+africa",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=paste+dump+burkina",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=stealer+logs+west+africa",
+        "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=ransomware+burkina+faso"
+      ]
+    },
+    "torch_searches": {
+      "base_url": "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion",
+      "query_pattern": "/search?query={keyword}&action=search",
+      "method": "GET",
+      "priority": "CRITICAL",
+      "description": "Torch utilise /search?query=...&action=search. Resultats non filtres.",
+      "urls": [
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=burkina+faso+data+leak&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=burkina+breach+database&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=gov.bf+password+dump&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=CNIB+data+exposed&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=credential+leak+africa&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=paste+dump+burkina&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=combo+list+west+africa&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=sql+injection+africa&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=ransomware+sahel&action=search",
+        "http://xmh57jrknzkhv6y3ls3ubitzfqnkrwxhopf5aygthi7d6rplyvk3noyd.onion/search?query=fuite+donn%C3%A9es+afrique&action=search"
+      ]
+    },
+    "haystak_searches": {
+      "base_url": "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion",
+      "query_pattern": "/?q={keyword}",
+      "method": "GET",
+      "priority": "HIGH",
+      "urls": [
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=burkina+faso+data+leak",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=burkina+breach+credentials",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=gov.bf+database+dump",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=west+africa+password+leak",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=CNIB+data+leak",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=mobile+money+hack+africa",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=stealer+logs+africa",
+        "http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=onatel+breach"
+      ]
+    },
+    "tordex_searches": {
+      "base_url": "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3losmeid.onion",
+      "query_pattern": "/search?query={keyword}",
+      "method": "GET",
+      "priority": "MEDIUM",
+      "urls": [
+        "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3losmeid.onion/search?query=burkina+faso+leak",
+        "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3losmeid.onion/search?query=africa+data+breach",
+        "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3losmeid.onion/search?query=credential+dump+west+africa",
+        "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3losmeid.onion/search?query=paste+leak+burkina",
+        "http://tordexpmg4xy32rfp4ovnz7zq5ujoejwq2u26uxxtkscgo5u3loyd.onion/search?query=gov.bf+hack"
+      ]
+    },
+    "directories_to_crawl": {
+      "description": "Pages de repertoire — crawler pour EXTRAIRE les liens .onion, puis les ajouter a la queue du spider.",
+      "strategy": "re.findall(r'https?://[a-z2-7]{56}\\.onion[^\"\\s]*', response.text) pour parser tous les .onion links",
+      "priority": "HIGH",
+      "urls": [
+        "http://i3cmpcfsfhbwc7viktpcyiqgm3zefracvcezcrvvunjqse3jo2shmsid.onion",
+        "http://klt7dge45wn73xmhfni4g6vax7eqewonzlemi4bqb7bv7h25ifu5y2id.onion",
+        "http://24n5ef4u2hrq2ygnvujpzb4q6po6wln2dobucaggrs5ydh6a7zpya3yd.onion",
+        "http://torlinksge6enmcyyuxjpjkoouw4oorgdgeo7ftnq3zodj7g2zxi3kyd.onion",
+        "http://jaz45aabn5vkemy4jkg4mi4syheisqn2wn2n4fsuitpccdackjwxplad.onion"
+      ]
+    },
+    "paste_sites_to_monitor": {
+      "description": "Paste sites — crawler /all et /recent pour decouvrir les pastes, analyser chaque paste avec IOC patterns.",
+      "strategy": "Fetch listing → extraire liens pastes → fetch chaque paste → analyser IOCs → si >= 5 IOCs → Kafka",
+      "priority": "CRITICAL",
+      "urls": [
+        "http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3ql3kcid.onion",
+        "http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3ql3kcid.onion/all",
+        "http://strongerw2ise74v3duebgsvug4mehyhlpa7f6kfwnas7zofs3ql3kcid.onion/recent"
+      ]
+    },
+    "forums_to_scrape": {
+      "description": "Forums publics — crawler les topics accessibles sans login. Si 403 → skip.",
+      "priority": "HIGH",
+      "urls": [
+        "http://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion",
+        "http://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion/d/DarkNetMarkets",
+        "http://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion/d/security",
+        "http://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion/d/leaks",
+        "http://dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion/d/hacking",
+        "http://ezdhgsy2aw7zg54z6dqsutrduhl22moami5zv2zt6urr6vub7gs6wfad.onion",
+        "http://v236xhqtyullodhf26szyjepvkbv6iitrhjgrqj4avaoukebkk6n6syd.onion"
+      ]
+    }
+  },
+  "scraper_config": {
+    "proxy": "http://127.0.0.1:8118",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0",
+    "concurrent_requests": 2,
+    "download_delay_seconds": 8,
+    "download_timeout_seconds": 60,
+    "retry_times": 3,
+    "tor_circuit_renewal_interval": 50,
+    "tor_control_port": 9051,
+    "mongodb_uri": "mongodb://localhost:27017/robust_scraper",
+    "kafka_topic": "raw_documents",
+    "min_ioc_threshold": 5,
+    "ioc_patterns": {
+      "emails_bf": ["@gov.bf", "@fasonet.bf", "@onatel.bf", "@orange.bf"],
+      "phone_bf": ["+226 70", "+226 71", "+226 76", "+226 77", "+226 78", "+226 65", "+226 66", "+226 67", "+226 68", "+226 69"],
+      "identity_bf": ["CNIB", "CNI Burkina"],
+      "institutions_bf": ["ONATEL", "SONABEL", "CNSS", "CARFO", "ANSSI", "Coris Bank", "Ecobank Burkina", "UBA Burkina", "Orange Burkina"],
+      "geo_bf": ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Banfora", "Burkina Faso"],
+      "gov_bf": ["gov.bf", "finances.gov.bf", "sante.gov.bf", "defense.gov.bf"],
+      "leak_markers": ["combo list", "database dump", "SQL injection", "credential stuffing", "stealer logs", "fullz", "CC dump", "leaked", "breached", "hacked", "for sale", "free leak"]
+    }
+  },
+  "workflow": {
+    "step_1": "Spider charge les start_urls (recherches Ahmia/Torch/Haystak avec keywords injectes)",
+    "step_2": "Pour chaque page de resultats: re.findall(r'https?://[a-z2-7]{56}\\.onion[^\\s\"]*', response.text)",
+    "step_3": "Dedupliquer contre MongoDB (visited_urls)",
+    "step_4": "yield scrapy.Request(new_url, callback=self.parse_page) pour chaque URL decouverte",
+    "step_5": "Analyser le contenu de chaque page avec IOC patterns",
+    "step_6": "Si score IOC >= 5 → extraction complete → Kafka raw_documents",
+    "step_7": "Directories crawlees en parallele pour decouvrir plus d URLs",
+    "step_8": "Paste sites monitores en continu (/recent)",
+    "step_9": "Renouveler circuit Tor tous les 50 requetes"
+  }
+}
